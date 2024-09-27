@@ -139,6 +139,9 @@ if [ "${ufw_install}" = "y" ]; then
   sed -i -e 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
   echo "Dante::installer: ufw: disable IPv6 support."
 
+  echo "Dante::installer: ufw: show added rules."
+  ufw show added
+
   echo "Dante::installer: ufw: enable?"
   ufw enable
 else
