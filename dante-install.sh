@@ -141,7 +141,7 @@ if [ "${ufw_install}" = "y" ]; then
   ufw show added
 
   echo "Dante::installer: ufw: enable?"
-  ufw enable
+  ufw --force enable
 else
   echo "Dante::installer: skipping install ufw."
 fi
