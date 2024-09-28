@@ -36,6 +36,7 @@ fi
 read -p "Dante::installer: do you need to create some users for Dante? [1] " dante_users_count
 if [ "${dante_users_count}" = "" ]; then
   dante_users_count=1
+  echo "Dante::installer: new users count is: ${dante_users_count}."
 fi
 
 read -p "Dante::installer: do you need to update Ubuntu packages? [y/n] " update_ubuntu
