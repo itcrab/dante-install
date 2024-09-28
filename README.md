@@ -1,5 +1,5 @@
 # dante-install
-Dante server install on Ubuntu 24.04 22.04
+Dante server install on Ubuntu 24.04 22.04 20.04
 
 ## Usage
 
@@ -22,9 +22,11 @@ Main goal is setup one closed server for using only as socs-proxy-server.
 - Select users count for creating;
 - Update Ubuntu packages;
 - Install some base packages (fail2ban, mc, btop);
+  - Ubuntu 20.04: E: Unable to locate package btop
 - Install ufw firewall and setup it for SSH and Dante ports;
-- Provide test connection curl command in the end.
+- Provide test connection curl command in the end;
+- Support last three LTS Ubuntu versions.
 
 ## Auto install feature?
 
-We got it after testing all Ubuntu versions in my list.
+Coming soon...
