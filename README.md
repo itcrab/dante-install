@@ -7,7 +7,7 @@ Just three shell commands:
 
 ```bash
 curl -O https://raw.githubusercontent.com/itcrab/dante-install/master/dante-install.sh
-chmod +x openvpn-install.sh
+chmod +x dante-install.sh
 ./dante-install.sh
 ```
 
