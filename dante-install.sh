@@ -4,7 +4,7 @@
 
 # Dante - A free SOCKS server :: Installer
 # Main goal is setup one closed server for using only as socs-proxy-server
-# Tested on Ubuntu 24.04
+# Tested on Ubuntu 24.04 22.04
 
 echo "Dante::installer: please give answers for some questions."
 echo "========================================================="

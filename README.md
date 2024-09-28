@@ -1,5 +1,5 @@
 # dante-install
-Dante server install on Ubuntu 24.04
+Dante server install on Ubuntu 24.04 22.04
 
 ## Usage
 
