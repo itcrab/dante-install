@@ -11,33 +11,33 @@ echo "========================================================="
 
 read -p "Dante::installer: do you need to install Dante-server? [y/n] " dante_install
 if [ "${dante_install}" != "y" ]; then
-  echo "Dante::installer: install Dante server is stopped now by your choice."
+  echo "  Dante::installer: install Dante server is stopped now by your choice."
   exit 1
 fi
 
 DANTE_SERVER_IP=$(hostname --ip-address)
 read -p "Dante::installer: Dante server IP address ${DANTE_SERVER_IP} is correct? [y/n] " ip_server
 if [ "${ip_server}" = "n" ]; then
-  read -p "Dante::installer: Please enter right IP address (like: 83.101.31.158): " DANTE_SERVER_IP
-  echo "Dante::installer: using entered IP address: ${DANTE_SERVER_IP}."
+  read -p "  Dante::installer: Please enter right IP address (like: 83.101.31.158): " DANTE_SERVER_IP
+  echo "  Dante::installer: using entered IP address: ${DANTE_SERVER_IP}."
 else
-  echo "Dante::installer: using auto calculated IP address: ${DANTE_SERVER_IP}."
+  echo "  Dante::installer: using auto calculated IP address: ${DANTE_SERVER_IP}."
 fi
 
 DANTE_SERVER_PORT="1080"
 read -p "Dante::installer: Dante server PORT ${DANTE_SERVER_PORT} is correct? [y/n] " port_server
 if [ "${port_server}" = "n" ]; then
-  read -p "Please enter right Dante server PORT (like: 61080): " DANTE_SERVER_PORT
-  echo "Dante::installer: using entered Dante server PORT: ${DANTE_SERVER_PORT}."
+  read -p "  Please enter right Dante server PORT (like: 61080): " DANTE_SERVER_PORT
+  echo "  Dante::installer: using entered Dante server PORT: ${DANTE_SERVER_PORT}."
 else
-  echo "Dante::installer: using default Dante server PORT: ${DANTE_SERVER_PORT}."
+  echo "  Dante::installer: using default Dante server PORT: ${DANTE_SERVER_PORT}."
 fi
 
 read -p "Dante::installer: do you need to create some users for Dante? [1] " dante_users_count
 if [ "${dante_users_count}" = "" ]; then
   dante_users_count=1
-  echo "Dante::installer: new users count is: ${dante_users_count}."
 fi
+echo "  Dante::installer: new users count is: ${dante_users_count}."
 
 read -p "Dante::installer: do you need to update Ubuntu packages? [y/n] " update_ubuntu
 read -p "Dante::installer: do you need to install base packages (fail2ban, mc, btop)? [y/n] " fail2ban_mc_install
