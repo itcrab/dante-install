@@ -26,7 +26,7 @@ fi
 DANTE_SERVER_PORT="1080"
 read -p "Dante::installer: Dante server PORT ${DANTE_SERVER_PORT} is correct? [y/n] " port_server
 if [ "${port_server}" = "n" ]; then
-  read -p "Please enter right Dante server PORT (like: 601080): " DANTE_SERVER_PORT
+  read -p "Please enter right Dante server PORT (like: 61080): " DANTE_SERVER_PORT
   echo "Dante::installer: using entered Dante server PORT: ${DANTE_SERVER_PORT}."
 else
   echo "Dante::installer: using default Dante server PORT: ${DANTE_SERVER_PORT}."
