@@ -43,7 +43,7 @@ read -p "Dante::installer: do you need to install base packages (fail2ban, mc, b
 read -p "Dante::installer: do you need to install ufw (firewall)? [y/n] " ufw_install
 echo "========================================================="
 
-if [ "${update_ubuntu}" = "y" ] || [ "${fail2ban_mc_install}" = "y" ] || [ "${dante_install}" = "y"] || [ "${ufw_install}" = "y"]; then
+if [ "${update_ubuntu}" = "y" ] || [ "${fail2ban_mc_install}" = "y" ] || [ "${ufw_install}" = "y"]; then
   echo "Dante::installer: update list Ubuntu packages."
   apt update
 fi
@@ -65,16 +65,15 @@ else
 fi
 echo "========================================================="
 
-if [ "${dante_install}" = "y" ]; then
-  echo "Dante::installer: install Dante-server."
-  apt install dante-server
-  systemctl --no-pager status danted.service  # failed start
-  echo "Dante::installer: Dante-server is already installed but is failed running."
-  echo "Dante::installer: this is ok - we fixed it right now."
+echo "Dante::installer: install Dante-server."
+apt install dante-server
+systemctl --no-pager status danted.service  # failed start
+echo "Dante::installer: Dante-server is already installed but is failed running."
+echo "Dante::installer: this is ok - we fixed it right now."
 
-  echo "Dante::installer: fixing Dante config."
-  cp /etc/danted.conf /etc/danted.conf.old
-  echo "# Settings from https://www.8host.com/blog/kak-nastroit-proksi-server-dante/
+echo "Dante::installer: fixing Dante config."
+cp /etc/danted.conf /etc/danted.conf.old
+echo "# Settings from: https://www.8host.com/blog/kak-nastroit-proksi-server-dante/
 logoutput: syslog
 user.privileged: root
 user.unprivileged: nobody
@@ -100,28 +99,25 @@ socks pass {
     from: 0.0.0.0/0 to: 0.0.0.0/0
 }" > /etc/danted.conf
 
-  if [[ $dante_users_count =~ ^[0-9]+$ ]]; then
-    echo "Dante::installer: create users for Dante."
-    for dante_user_id in $(seq 1 $dante_users_count); do
-      echo "Dante::installer: create user #${dante_user_id} for Dante."
+if [[ $dante_users_count =~ ^[0-9]+$ ]]; then
+  echo "Dante::installer: create users for Dante."
+  for dante_user_id in $(seq 1 $dante_users_count); do
+    echo "Dante::installer: create user #${dante_user_id} for Dante."
 
-      read -p "Dante::installer: please enter user name (like: Ivan): " dante_user_name
-      useradd -r -s /bin/false ${dante_user_name}
+    read -p "Dante::installer: please enter user name (like: Ivan): " dante_user_name
+    useradd -r -s /bin/false ${dante_user_name}
 
-      example_password=$(tr -dc 'A-Za-z0-9!?#@%=' < /dev/urandom | head -c 16)
-      echo "Please enter user password (like: ${example_password}):"
-      passwd ${dante_user_name}
-    done
-  else
-    echo "stop install"
-    exit 1
-  fi
-
-  systemctl restart danted.service
-  echo "Dante::installer: Dante-server installed and already run right now."
+    example_password=$(tr -dc 'A-Za-z0-9!?#@%=' < /dev/urandom | head -c 16)
+    echo "Please enter user password (like: ${example_password}):"
+    passwd ${dante_user_name}
+  done
 else
-  echo "Dante::installer: skipping install Dante-server."
+  echo "stop install"
+  exit 1
 fi
+
+systemctl restart danted.service
+echo "Dante::installer: Dante-server installed and already run right now."
 echo "========================================================="
 
 if [ "${ufw_install}" = "y" ]; then
