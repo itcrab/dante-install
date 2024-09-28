@@ -118,6 +118,7 @@ else
 fi
 
 systemctl restart danted.service
+systemctl --no-pager status danted.service  # good start
 echo "Dante::installer: Dante-server installed and already run right now."
 echo "========================================================="
 
