@@ -41,6 +41,18 @@ fi
 
 read -p "Dante::installer: do you need to update Ubuntu packages? [y/n] " update_ubuntu
 read -p "Dante::installer: do you need to install base packages (fail2ban, mc, btop)? [y/n] " fail2ban_mc_install
+
+read -p "Dante::installer: do you need to enable hard security feature? [y/n] " hard_security_enable
+FAIL2BAN_MAXRETRY="3"
+FAIL2BAN_FINDTIME="1h"
+FAIL2BAN_BANTIME="7d"
+if [ "${hard_security_enable}" = "y" ]; then
+  FAIL2BAN_MAXRETRY="1"
+  FAIL2BAN_FINDTIME="1d"
+  FAIL2BAN_BANTIME="30d"
+fi
+echo "  Dante::installer: fail2ban: ${FAIL2BAN_MAXRETRY} wrong auth by ${FAIL2BAN_FINDTIME} => ban for ${FAIL2BAN_BANTIME}."
+
 read -p "Dante::installer: do you need to install ufw (firewall)? [y/n] " ufw_install
 echo "========================================================="
 
@@ -61,6 +73,18 @@ echo "========================================================="
 if [ "${fail2ban_mc_install}" = "y" ]; then
   echo "Dante::installer: install fail2ban, mc, btop."
   apt install -y fail2ban mc btop
+
+  if [ "${fail2ban_mc_install}" = "y" ]; then
+    echo "Dante::installer: setup hard security feature."
+  fi
+  cp /etc/fail2ban/jail.local /etc/fail2ban/jail.local.old
+  echo "[sshd]
+enabled   = true
+maxretry  = ${FAIL2BAN_MAXRETRY}
+findtime  = ${FAIL2BAN_FINDTIME}
+bantime   = ${FAIL2BAN_BANTIME}
+ignoreip  = 127.0.0.1/8" > /etc/fail2ban/jail.local
+  systemctl restart fail2ban
 else
   echo "Dante::installer: skipping install fail2ban, mc, btop."
 fi
