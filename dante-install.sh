@@ -47,6 +47,7 @@ FAIL2BAN_MAXRETRY="3"
 FAIL2BAN_FINDTIME="1h"
 FAIL2BAN_BANTIME="7d"
 if [ "${hard_security_enable}" = "y" ]; then
+  echo "  Dante::installer: setup hard security feature."
   FAIL2BAN_MAXRETRY="1"
   FAIL2BAN_FINDTIME="1d"
   FAIL2BAN_BANTIME="30d"
@@ -74,16 +75,22 @@ if [ "${fail2ban_mc_install}" = "y" ]; then
   echo "Dante::installer: install fail2ban, mc, btop."
   apt install -y fail2ban mc btop
 
-  if [ "${fail2ban_mc_install}" = "y" ]; then
-    echo "Dante::installer: setup hard security feature."
-  fi
-  cp /etc/fail2ban/jail.local /etc/fail2ban/jail.local.old
-  echo "[sshd]
-enabled   = true
+  curl https://raw.githubusercontent.com/fail2ban/fail2ban/refs/heads/master/config/filter.d/dante.conf -o /etc/fail2ban/filter.d/dante.conf
+
+  echo "[DEFAULT]
 maxretry  = ${FAIL2BAN_MAXRETRY}
 findtime  = ${FAIL2BAN_FINDTIME}
 bantime   = ${FAIL2BAN_BANTIME}
-ignoreip  = 127.0.0.1/8" > /etc/fail2ban/jail.local
+
+[sshd]
+enabled   = true
+port      = ssh
+ignoreip  = 127.0.0.1/8
+
+[dante]
+enabled   = true
+port    = ${DANTE_SERVER_PORT}
+logpath = %(syslog_daemon)s" > /etc/fail2ban/jail.local
   systemctl restart fail2ban
 else
   echo "Dante::installer: skipping install fail2ban, mc, btop."
