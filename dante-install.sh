@@ -11,36 +11,49 @@ echo "========================================================="
 
 read -p "Dante::installer: do you need to install Dante-server? [y/n] " dante_install
 if [ "${dante_install}" != "y" ]; then
-  echo "Dante::installer: install Dante server is stopped now by your choice."
+  echo "  Dante::installer: install Dante server is stopped now by your choice."
   exit 1
 fi
 
 DANTE_SERVER_IP=$(hostname --ip-address)
 read -p "Dante::installer: Dante server IP address ${DANTE_SERVER_IP} is correct? [y/n] " ip_server
 if [ "${ip_server}" = "n" ]; then
-  read -p "Dante::installer: Please enter right IP address (like: 83.101.31.158): " DANTE_SERVER_IP
-  echo "Dante::installer: using entered IP address: ${DANTE_SERVER_IP}."
+  read -p "  Dante::installer: Please enter right IP address (like: 83.101.31.158): " DANTE_SERVER_IP
+  echo "  Dante::installer: using entered IP address: ${DANTE_SERVER_IP}."
 else
-  echo "Dante::installer: using auto calculated IP address: ${DANTE_SERVER_IP}."
+  echo "  Dante::installer: using auto calculated IP address: ${DANTE_SERVER_IP}."
 fi
 
 DANTE_SERVER_PORT="1080"
 read -p "Dante::installer: Dante server PORT ${DANTE_SERVER_PORT} is correct? [y/n] " port_server
 if [ "${port_server}" = "n" ]; then
-  read -p "Please enter right Dante server PORT (like: 61080): " DANTE_SERVER_PORT
-  echo "Dante::installer: using entered Dante server PORT: ${DANTE_SERVER_PORT}."
+  read -p "  Please enter right Dante server PORT (like: 61080): " DANTE_SERVER_PORT
+  echo "  Dante::installer: using entered Dante server PORT: ${DANTE_SERVER_PORT}."
 else
-  echo "Dante::installer: using default Dante server PORT: ${DANTE_SERVER_PORT}."
+  echo "  Dante::installer: using default Dante server PORT: ${DANTE_SERVER_PORT}."
 fi
 
 read -p "Dante::installer: do you need to create some users for Dante? [1] " dante_users_count
 if [ "${dante_users_count}" = "" ]; then
   dante_users_count=1
-  echo "Dante::installer: new users count is: ${dante_users_count}."
 fi
+echo "  Dante::installer: new users count is: ${dante_users_count}."
 
 read -p "Dante::installer: do you need to update Ubuntu packages? [y/n] " update_ubuntu
 read -p "Dante::installer: do you need to install base packages (fail2ban, mc, btop)? [y/n] " fail2ban_mc_install
+
+read -p "Dante::installer: do you need to enable hard security feature? [y/n] " hard_security_enable
+FAIL2BAN_MAXRETRY="3"
+FAIL2BAN_FINDTIME="1h"
+FAIL2BAN_BANTIME="7d"
+if [ "${hard_security_enable}" = "y" ]; then
+  echo "  Dante::installer: setup hard security feature."
+  FAIL2BAN_MAXRETRY="1"
+  FAIL2BAN_FINDTIME="1d"
+  FAIL2BAN_BANTIME="30d"
+fi
+echo "  Dante::installer: fail2ban: ${FAIL2BAN_MAXRETRY} wrong auth by ${FAIL2BAN_FINDTIME} => ban for ${FAIL2BAN_BANTIME}."
+
 read -p "Dante::installer: do you need to install ufw (firewall)? [y/n] " ufw_install
 echo "========================================================="
 
@@ -61,6 +74,24 @@ echo "========================================================="
 if [ "${fail2ban_mc_install}" = "y" ]; then
   echo "Dante::installer: install fail2ban, mc, btop."
   apt install -y fail2ban mc btop
+
+  curl https://raw.githubusercontent.com/fail2ban/fail2ban/refs/heads/master/config/filter.d/dante.conf -o /etc/fail2ban/filter.d/dante.conf
+
+  echo "[DEFAULT]
+maxretry  = ${FAIL2BAN_MAXRETRY}
+findtime  = ${FAIL2BAN_FINDTIME}
+bantime   = ${FAIL2BAN_BANTIME}
+
+[sshd]
+enabled   = true
+port      = ssh
+ignoreip  = 127.0.0.1/8
+
+[dante]
+enabled   = true
+port    = ${DANTE_SERVER_PORT}
+logpath = %(syslog_daemon)s" > /etc/fail2ban/jail.local
+  systemctl restart fail2ban
 else
   echo "Dante::installer: skipping install fail2ban, mc, btop."
 fi
